@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		652C52837392BA567E7E5378 /* libPods-githubsearch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA4AA0BB6C25AC582D40556 /* libPods-githubsearch.a */; };
 		F5EF59952355769400B496D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EF59942355769400B496D4 /* AppDelegate.swift */; };
 		F5EF599E2355769A00B496D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5EF599D2355769A00B496D4 /* Assets.xcassets */; };
 		F5EF59A12355769A00B496D4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5EF599F2355769A00B496D4 /* LaunchScreen.storyboard */; };
@@ -14,12 +15,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4AA4AA0BB6C25AC582D40556 /* libPods-githubsearch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-githubsearch.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE08B1CE5617C8218B125AE1 /* Pods-githubsearch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-githubsearch.debug.xcconfig"; path = "Target Support Files/Pods-githubsearch/Pods-githubsearch.debug.xcconfig"; sourceTree = "<group>"; };
 		F5EF59912355769400B496D4 /* githubsearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = githubsearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5EF59942355769400B496D4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F5EF599D2355769A00B496D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F5EF59A02355769A00B496D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F5EF59A22355769A00B496D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5EF59A8235577DF00B496D4 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		F6F69F85950E036471E36F78 /* Pods-githubsearch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-githubsearch.release.xcconfig"; path = "Target Support Files/Pods-githubsearch/Pods-githubsearch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,17 +31,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				652C52837392BA567E7E5378 /* libPods-githubsearch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		411F99D93EE6E43ADD6D8F18 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4AA4AA0BB6C25AC582D40556 /* libPods-githubsearch.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		430CF97303D8ECD8987C14AF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EE08B1CE5617C8218B125AE1 /* Pods-githubsearch.debug.xcconfig */,
+				F6F69F85950E036471E36F78 /* Pods-githubsearch.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		F5EF59882355769400B496D4 = {
 			isa = PBXGroup;
 			children = (
 				F5EF59932355769400B496D4 /* githubsearch */,
 				F5EF59922355769400B496D4 /* Products */,
+				430CF97303D8ECD8987C14AF /* Pods */,
+				411F99D93EE6E43ADD6D8F18 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,6 +93,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F5EF59A52355769A00B496D4 /* Build configuration list for PBXNativeTarget "githubsearch" */;
 			buildPhases = (
+				3D21241617D94B190232759E /* [CP] Check Pods Manifest.lock */,
 				F5EF598D2355769400B496D4 /* Sources */,
 				F5EF598E2355769400B496D4 /* Frameworks */,
 				F5EF598F2355769400B496D4 /* Resources */,
@@ -125,6 +151,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3D21241617D94B190232759E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-githubsearch-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F5EF598D2355769400B496D4 /* Sources */ = {
@@ -266,6 +317,7 @@
 		};
 		F5EF59A62355769A00B496D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EE08B1CE5617C8218B125AE1 /* Pods-githubsearch.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -283,6 +335,7 @@
 		};
 		F5EF59A72355769A00B496D4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6F69F85950E036471E36F78 /* Pods-githubsearch.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
