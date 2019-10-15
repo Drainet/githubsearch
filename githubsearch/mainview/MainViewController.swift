@@ -38,7 +38,7 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
     private let loadNextSubject = PublishSubject<String>()
 
-    private var page: Page<GithubUser> = Page<GithubUser>.empty()
+    private var page: GithubRequestPage<GithubUser>?
 
     private var results = [GithubUser]()
 
@@ -66,12 +66,16 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
         searchSubject
             .distinctUntilChanged()
-            .flatMapLatest { [unowned self] query -> Single<Page<GithubUser>> in
-                self.page = Page<GithubUser>.empty()
+            .flatMapLatest { [unowned self] query -> Maybe<GithubRequestPage<GithubUser>> in
+                self.page = nil
                 self.results = [GithubUser]()
                 self.collectionView.reloadData()
                 return self.githubService
                     .search(query: query, page: self.page)
+                    .asMaybe()
+                    .catchError { _ in
+                        Maybe.empty()
+                    }
             }
             .subscribe(
                 onNext: { [unowned self] page in
@@ -83,9 +87,13 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             .disposed(by: disposeBag)
 
         loadNextSubject
-            .flatMapLatest { [unowned self] query -> Single<Page<GithubUser>> in
+            .flatMapLatest { [unowned self] query -> Maybe<GithubRequestPage<GithubUser>> in
                 self.githubService
                     .search(query: query, page: self.page)
+                    .asMaybe()
+                    .catchError { _ in
+                        Maybe.empty()
+                    }
             }
             .subscribe(
                 onNext: { [unowned self] page in
@@ -116,7 +124,7 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     }
 
     func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row > results.count - 3, let query = searchBar.text, self.page.hasNext {
+        if indexPath.row > results.count - 3, let query = searchBar.text, self.page?.hasNext ?? true {
             self.loadNextSubject.onNext(query)
         }
     }

@@ -15,7 +15,9 @@ class Services {
     }()
 
     private static let sessionManager: SessionManager = {
-        let manager = Alamofire.SessionManager(configuration: URLSessionConfiguration.default)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 5
+        let manager = Alamofire.SessionManager(configuration: configuration)
         return manager
     }()
 

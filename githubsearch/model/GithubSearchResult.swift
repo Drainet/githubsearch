@@ -6,5 +6,5 @@
 import Foundation
 
 struct GithubSearchResult: Decodable {
-    let items: [GithubUser]
+    let items: [GithubUser]?
 }

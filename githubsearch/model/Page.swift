@@ -16,3 +16,15 @@ public struct Page<T: Decodable> {
         Page<T>(nextId: 1, data: [T]())
     }
 }
+
+public struct GithubRequestPage<T: Decodable> {
+    public let nextUrl: String?
+    public let data: [T]
+    public var hasNext: Bool {
+        nextUrl != nil
+    }
+
+    public static func empty<T: Decodable>() -> GithubRequestPage<T> {
+        GithubRequestPage<T>(nextUrl: nil, data: [T]())
+    }
+}
