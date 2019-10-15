@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  githubsearch
 //
-//  Created by 張喬彥 on 2019/10/15.
+//  Created by drain on 2019/10/15.
 //  Copyright © 2019 drain. All rights reserved.
 //
 
