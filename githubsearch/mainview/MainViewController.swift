@@ -10,7 +10,7 @@ import RxSwift
 import SnapKit
 import UIKit
 
-class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UISearchBarDelegate {
     required init?(coder _: NSCoder) {
         fatalError("not supported")
     }
@@ -24,9 +24,9 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         super.init(nibName: nil, bundle: nil)
     }
 
-    let textField = UITextField()
+    private let searchBar = UISearchBar()
 
-    lazy var collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(GithubUserCell.self, forCellWithReuseIdentifier: "GithubUserCell")
         collectionView.delegate = self
@@ -34,19 +34,22 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         return collectionView
     }()
 
+    private let searchSubject = PublishSubject<String>()
+
     override func loadView() {
         super.loadView()
         view.backgroundColor = .black
-        view.addSubview(textField)
+        view.addSubview(searchBar)
         view.addSubview(collectionView)
 
-        textField.snp.makeConstraints {
+        searchBar.delegate = self
+        searchBar.barStyle = .black
+        searchBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(60)
         }
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(textField.snp.bottom)
+            $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
@@ -56,14 +59,19 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        githubService
-            .search(query: "tom", page: page)
+
+        searchSubject
+            .distinctUntilChanged()
+            .flatMapLatest { [unowned self] query -> Single<Page<GithubUser>> in
+                self.page = Page<GithubUser>.empty()
+                self.collectionView.reloadData()
+                return self.githubService
+                    .search(query: query, page: self.page)
+            }
             .subscribe(
-                onSuccess: { page in
+                onNext: { [unowned self] page in
                     self.page = page
                     self.collectionView.reloadData()
-                },
-                onError: { _ in
                 }
             )
             .disposed(by: disposeBag)
@@ -71,7 +79,7 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GithubUserCell", for: indexPath) as! GithubUserCell
-        cell.bind(githubUser: self.page.data[indexPath.row])
+        cell.bind(githubUser: page.data[indexPath.row])
         return cell
     }
 
@@ -80,10 +88,25 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        self.page.data.count
+        page.data.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: UIScreen.main.bounds.width, height: 40)
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        CGSize(width: UIScreen.main.bounds.width, height: 62)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        0
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let query = searchBar.text {
+            self.searchSubject.onNext(query)
+            searchBar.endEditing(true)
+        }
     }
 }
