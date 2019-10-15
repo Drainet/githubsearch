@@ -9,7 +9,7 @@ public struct Page<T: Decodable> {
     public let nextId: Int?
     public let data: [T]
     public var hasNext: Bool {
-        nextId != nil
+        !data.isEmpty
     }
 
     public static func empty<T: Decodable>() -> Page<T> {

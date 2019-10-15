@@ -36,6 +36,12 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
     private let searchSubject = PublishSubject<String>()
 
+    private let loadNextSubject = PublishSubject<String>()
+
+    private var page: Page<GithubUser> = Page<GithubUser>.empty()
+
+    private var results = [GithubUser]()
+
     override func loadView() {
         super.loadView()
         view.backgroundColor = .black
@@ -55,8 +61,6 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         }
     }
 
-    private var page: Page<GithubUser> = Page<GithubUser>.empty()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -64,6 +68,7 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             .distinctUntilChanged()
             .flatMapLatest { [unowned self] query -> Single<Page<GithubUser>> in
                 self.page = Page<GithubUser>.empty()
+                self.results = [GithubUser]()
                 self.collectionView.reloadData()
                 return self.githubService
                     .search(query: query, page: self.page)
@@ -71,6 +76,21 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             .subscribe(
                 onNext: { [unowned self] page in
                     self.page = page
+                    self.results = page.data
+                    self.collectionView.reloadData()
+                }
+            )
+            .disposed(by: disposeBag)
+
+        loadNextSubject
+            .flatMapLatest { [unowned self] query -> Single<Page<GithubUser>> in
+                self.githubService
+                    .search(query: query, page: self.page)
+            }
+            .subscribe(
+                onNext: { [unowned self] page in
+                    self.page = page
+                    self.results += page.data
                     self.collectionView.reloadData()
                 }
             )
@@ -79,7 +99,7 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GithubUserCell", for: indexPath) as! GithubUserCell
-        cell.bind(githubUser: page.data[indexPath.row])
+        cell.bind(githubUser: results[indexPath.row])
         return cell
     }
 
@@ -88,24 +108,30 @@ class MainViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        page.data.count
+        results.count
     }
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         CGSize(width: UIScreen.main.bounds.width, height: 62)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row > results.count - 3, let query = searchBar.text, self.page.hasNext {
+            self.loadNextSubject.onNext(query)
+        }
+    }
+
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
         0
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumInteritemSpacingForSectionAt _: Int) -> CGFloat {
         0
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
-            self.searchSubject.onNext(query)
+            searchSubject.onNext(query)
             searchBar.endEditing(true)
         }
     }
