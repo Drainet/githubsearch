@@ -41,5 +41,6 @@ class AlaGithubService: GithubService {
                 }
             return Disposables.create()
         }
+        .observeOn(MainScheduler.instance)
     }
 }
